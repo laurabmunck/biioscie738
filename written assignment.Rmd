@@ -1,0 +1,94 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-04-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Cleaning up the data
+```{r}
+#Reading in the txt file and coverting it to a dataframe
+lines <- readLines("~/Downloads/s_MTBLS5568.txt")
+split_line <- strsplit(lines, "\t")
+samples <- do.call(rbind, lapply(split_line, function(x) as.data.frame(t(x), stringAsFactor=FALSE)))
+# I want the fist row of the coloumn to be the columnames
+colnames(samples) <- samples[1, ]
+samples <- samples[-1, ]
+#Renaming columns so they are easier to work with
+colnames(samples) <- make.unique(colnames(samples))
+samples <- samples%>%
+  rename(source=`Source Name`, sample_type=`Characteristics[Sample type]`, sample_name=`Sample Name`, ethnicity=`Factor Value[Ethnic group]`, WPI=`Factor Value[WPI]`, time=`Factor Value[Time]`, participant_id=`Comment[Participant ID]`, age=`Factor Value[Age]`, BMI=`Factor Value[BMI]`, MRI_pf=`Factor Value[MRI pancreas fat]`)
+plot(samples$MRI_pf~samples$BMI)
+plot(samples$BMI~samples$age)
+plot(samples$MRI_pf~samples$age)
+```
+```{r}
+group_by(samples$ethnicity)
+plot(samples$ethnicity~samples$MRI_pf)
+plot(samples$ethnicity~samples$BMI)
+```
+
+## metabolite data 
+
+```{r}
+metabolite_data <- read.table("~/Downloads/m_MTBLS5568_LC-MS_neg_hilic_metabolite_profiling_v2_maf.tsv", header = TRUE, sep="\t")
+```
+
+```{r}
+metabolites_l <- metabolite_data%>%
+  pivot_longer(cols=starts_with("X"), names_to="source", values_to = "value")%>%
+  pivot_wider(names_from= metabolite_identification, values_from = value)
+```
+
+New data frame with selected metabolites: 
+```{r}
+metabolites_short <- metabolites_l%>%
+  select(source, `L-Threonine`, `Citric acid`, `Uric acid`, `L-Cystine`, `L-Tyrosine`, `L-Histidine`)
+```
+Remove X from source name: 
+```{r}
+metabolites_short <- data.frame(lapply(metabolites_short, function(x) gsub("^X", "", x)))
+```
+
+Now I can merge the two dataframes: 
+```{r}
+merge_df <- merge(samples, metabolites_short, by="source", all.x=TRUE)
+```
+
+Now I can use merged_df, when looking at metabolites and ethnicity and other variables. 
+Plot time against citric.acid and group by WPI:
+## Why is this not working???
+
+```{r}
+clean_data <- merge_df%>%
+  filter(!is.na(Citric.acid))
+
+mean_data <- clean_data%>%
+  group_by(time, WPI)%>%
+  summarise(mean_citric_acid=mean(Citric.acid, na.rm=TRUE))
+
+print(ggplot(mean_data, aes(x=time, y=mean_citric_acid, color=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="Citric Acid", 
+       c= "Time", 
+       y="Citric Acid"))
+```
+Might want to group by both WPI and MRI - how do I do that?
+and classify MRI as high and low 
+
+Also it could be interesting to see how BMI and WPI grouping changes in compariset to MRI
+and then looking a ethnic differences (first see if there are wthnic differences in MRI and BMI) but then also if there are differences in metablome. 
+
+Maybe end goal is to find out what affects the metablome (potential differences) - is it BMI, ethnicity, MRI (age)
+In the study they say that ethnicity was a stronger predictor for metablome than MRI
+What is the simples model (least variables) that can explain correlation between metablom(conc of metabolites) and WPI intake? so that would be an anova with metablome as a response variable and WPI intake as the groups. and then find out if we need subgroups
+
+Questions?: 
+- what does the feature exclusion pipeline mean for the data reliability? 
+
+Få overblik over source - alle kan være b1 eller b2. 
