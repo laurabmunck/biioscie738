@@ -91,4 +91,4 @@ What is the simples model (least variables) that can explain correlation between
 Questions?: 
 - what does the feature exclusion pipeline mean for the data reliability? 
 
-Få overblik over source - alle kan være b1 eller b2. 
+Få overblik over source - alle kan være b1 eller b2.  
