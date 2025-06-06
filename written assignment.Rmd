@@ -6,6 +6,8 @@ date: "2025-04-01"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+install.packages("tidyverse")
+library(tidyverse)
 ```
 
 
@@ -61,28 +63,91 @@ merge_df <- merge(samples, metabolites_short, by="source", all.x=TRUE)
 
 Now I can use merged_df, when looking at metabolites and ethnicity and other variables. 
 Plot time against citric.acid and group by WPI:
-## Why is this not working???
+## Gør det her for alle metabolitter: 
 
 ```{r}
-clean_data <- merge_df%>%
+clean_data <- clean_data %>%
   filter(!is.na(Citric.acid))
 
-mean_data <- clean_data%>%
-  group_by(time, WPI)%>%
-  summarise(mean_citric_acid=mean(Citric.acid, na.rm=TRUE))
+clean_data$Citric.acid <- as.numeric(as.character(clean_data$Citric.acid))
 
-print(ggplot(mean_data, aes(x=time, y=mean_citric_acid, color=WPI))+
+mean_data_1 <- clean_data%>%
+  group_by(time, WPI)%>%
+  summarise(mean_citric_acid = mean(Citric.acid, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_1, aes(x=time, y=mean_citric_acid, color=WPI, group=WPI))+
   geom_point()+
   geom_line()+
   labs(title="Citric Acid", 
-       c= "Time", 
-       y="Citric Acid"))
+       x= "Time", 
+       y="Citric Acid")
 ```
 Might want to group by both WPI and MRI - how do I do that?
 and classify MRI as high and low 
 
+```{r}
+clean_data <- clean_data %>%
+  filter(!is.na(Citric.acid))
+
+clean_data$Citric.acid <- as.numeric(as.character(clean_data$Citric.acid))
+
+mean_data_MW <- clean_data%>%
+  group_by(MRI_pf, WPI)%>%
+  summarise(mean_citric_acid = mean(Citric.acid, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_MW, aes(x=MRI_pf, y=mean_citric_acid, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="Citric Acid", 
+       x= "MRI", 
+       y="Citric Acid")
+
+```
+
+
 Also it could be interesting to see how BMI and WPI grouping changes in compariset to MRI
 and then looking a ethnic differences (first see if there are wthnic differences in MRI and BMI) but then also if there are differences in metablome. 
+
+# Prøver at finde ud af hvilke variable der påvirker citric acid 
+# Skal gøres for alle metabolitter 
+```{r}
+model_ca <- lm(Citric.acid~MRI_pf+BMI+age+WPI+ethnicity, data=clean_data)
+summary(model_ca)
+```
+
+```{r}
+install.packages("randomForest")
+library(randomForest)
+random_ca <- randomForest(Citric.acid~MRI_pf+BMI+age+WPI+ethnicity, data=clean_data)
+varImpPlot(random_ca)
+```
+
+Ligner at age, MRI and BMI means the most? 
+Skal jeg prøve at plotte efter dem? - hvordan WPI ændre sig over tid, grupperet efter age, MRI and BMI (men det er ikke rigtig grupper, for de har jo forskellige BMI'er)
+
+Prediction: Build an accurate model for future data.
+
+Explanation: Understand how age, BMI, MRI affect the outcome.
+
+Inference: Test specific hypotheses (e.g., Does age significantly affect the outcome, adjusting for BMI and MRI?)
+
+refitting a focused model: 
+```{r}
+model_glm <- glm(Citric.acid~age+BMI+MRI_pf, data=clean_data)
+summary(model_glm)
+plot(model_glm)
+```
+
+```{r}
+model_lm <- lm(Citric.acid~age+BMI+MRI_pf, data=clean_data)
+summary(model_lm)
+plot(model_lm)
+```
+# check for interactions between variables 
+```{r}
+model_interact <- lm(Citric.acid~age*BMI+MRI_pf, data=clean_data)
+summary(model_interact)
+```
 
 Maybe end goal is to find out what affects the metablome (potential differences) - is it BMI, ethnicity, MRI (age)
 In the study they say that ethnicity was a stronger predictor for metablome than MRI
