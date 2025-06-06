@@ -1,0 +1,132 @@
+---
+title: "Plot 1 - grouped by WPI"
+output: html_document
+date: "2025-06-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Start by reading in the data 
+```{r}
+clean_data_1 <- read.csv("clean_data_1.csv")
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+# Plots - grouped by WPI 
+# Plot Citric Acid
+```{r}
+
+clean_data_2 <- clean_data_1 %>%
+  filter(!is.na(Citric.acid))
+
+clean_data_2$Citric.acid <- as.numeric(as.character(clean_data_2$Citric.acid))
+
+mean_data_1 <- clean_data_2%>%
+  group_by(time, WPI)%>%
+  summarise(mean_citric_acid = mean(Citric.acid, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_1, aes(x=time, y=mean_citric_acid, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="Citric Acid", 
+       x= "Time", 
+       y="Citric Acid")
+```
+
+# Plot Uric acid
+```{r}
+clean_data_3 <- clean_data_1 %>%
+  filter(!is.na(Uric.acid))
+
+clean_data_3$Uric.acid <- as.numeric(as.character(clean_data_3$Uric.acid))
+
+mean_data_2 <- clean_data_3%>%
+  group_by(time, WPI)%>%
+  summarise(mean_uric_acid = mean(Uric.acid, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_2, aes(x=time, y=mean_uric_acid, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="Uric Acid", 
+       x= "Time", 
+       y="Uric Acid")
+```
+
+# Plot L-Tyrosine
+```{r}
+clean_data_4 <- clean_data_1 %>%
+  filter(!is.na(L.Tyrosine))
+
+clean_data_4$L.Tyrosine <- as.numeric(as.character(clean_data_4$L.Tyrosine))
+
+mean_data_3 <- clean_data_4%>%
+  group_by(time, WPI)%>%
+  summarise(mean_ltyrosine = mean(L.Tyrosine, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_3, aes(x=time, y=mean_ltyrosine, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="L-Tyrosine", 
+       x= "Time", 
+       y="L-Tyrosine")
+```
+
+# Plot L-Threonine
+```{r}
+clean_data_5 <- clean_data_1 %>%
+  filter(!is.na(L.Threonine))
+
+clean_data_5$L.Threonine <- as.numeric(as.character(clean_data_5$L.Threonine))
+
+mean_data_4 <- clean_data_5%>%
+  group_by(time, WPI)%>%
+  summarise(mean_lthreonine = mean(L.Threonine, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_4, aes(x=time, y=mean_lthreonine, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="L-Threonine", 
+       x= "Time", 
+       y="L-Threonine")
+```
+
+# Plot L-Histidine
+```{r}
+clean_data_6 <- clean_data_1 %>%
+  filter(!is.na(L.Histidine))
+
+clean_data_6$L.Histidine <- as.numeric(as.character(clean_data_6$L.Histidine))
+
+mean_data_5 <- clean_data_6%>%
+  group_by(time, WPI)%>%
+  summarise(mean_lhistidine = mean(L.Histidine, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_5, aes(x=time, y=mean_lhistidine, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="L-Histidine", 
+       x= "Time", 
+       y="L-Histidine")
+```
+
+# Plot L-Cystine 
+```{r}
+clean_data_7 <- clean_data_1%>%
+  filter(!is.na(L.Cystine))
+
+clean_data_7$L.Cystine <- as.numeric(as.character(clean_data_7$L.Cystine))
+
+mean_data_6 <- clean_data_7%>%
+  group_by(time, WPI)%>%
+  summarise(mean_lcystine = mean(L.Cystine, na.rm=TRUE), .groups = "drop")
+
+ggplot(mean_data_6, aes(x=time, y=mean_lcystine, color=WPI, group=WPI))+
+  geom_point()+
+  geom_line()+
+  labs(title="L-Cystine", 
+       x= "Time", 
+       y="L-cystine")
+```
+
