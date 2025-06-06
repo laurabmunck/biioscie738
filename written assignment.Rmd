@@ -10,7 +10,7 @@ install.packages("tidyverse")
 library(tidyverse)
 ```
 
-
+ 
 ## Cleaning up the data
 ```{r}
 #Reading in the txt file and coverting it to a dataframe
