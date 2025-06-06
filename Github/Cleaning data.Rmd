@@ -1,0 +1,51 @@
+---
+title: "Cleaning up the data"
+output: html_document
+date: "2025-06-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# First data set 
+```{r}
+#Reading in the txt file and coverting it to a dataframe
+lines <- readLines("s_MTBLS5568.txt")
+split_line <- strsplit(lines, "\t")
+samples <- do.call(rbind, lapply(split_line, function(x) as.data.frame(t(x), stringAsFactor=FALSE)))
+
+# Converting fist row of the coloumn to be the column names
+colnames(samples) <- samples[1, ]
+samples <- samples[-1, ]
+
+#Renaming columns so they are easier to work with
+colnames(samples) <- make.unique(colnames(samples))
+samples <- samples%>%
+  rename(source=`Source Name`, sample_type=`Characteristics[Sample type]`, sample_name=`Sample Name`, ethnicity=`Factor Value[Ethnic group]`, WPI=`Factor Value[WPI]`, time=`Factor Value[Time]`, participant_id=`Comment[Participant ID]`, age=`Factor Value[Age]`, BMI=`Factor Value[BMI]`, MRI_pf=`Factor Value[MRI pancreas fat]`)
+```
+
+# Second dataset 
+
+```{r}
+# reading in metabolite data
+metabolite_data <- read.table("metabolites.tsv", header = TRUE, sep="\t")
+
+# Wrangling data
+metabolite_data_1 <- metabolite_data%>%
+  pivot_longer(cols=starts_with("X"), names_to="source", values_to = "value")%>%
+  pivot_wider(names_from= metabolite_identification, values_from = value)
+
+# Selecting 6 metabolites to work with 
+metabolite_data_2 <- metabolite_data_1%>%
+  select(source, `L-Threonine`, `Citric acid`, `Uric acid`, `L-Cystine`, `L-Tyrosine`, `L-Histidine`)
+
+# Removing X from variable name 
+metabolite_data_3 <- data.frame(lapply(metabolite_data_2, function(x) gsub("^X", "", x)))
+```
+
+# Merging the 2 dataframes
+
+```{r}
+clean_data_1 <- merge(samples, metabolite_data_3, by="source", all.x=TRUE)
+```
