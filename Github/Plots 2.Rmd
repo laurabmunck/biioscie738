@@ -1,0 +1,219 @@
+---
+title: "Plot 2"
+output: html_document
+date: "2025-06-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Start by reading in data
+```{r}
+clean_data_1 <- read.csv("clean_data_1.csv")
+
+# install and load packages
+install.packages("tidyverse")
+library(tidyverse)
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+# Citric Acid 
+```{r}
+clean_data_cv <- clean_data_1 %>%
+  filter(!is.na(Citric.acid), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_cv$Citric.acid <- as.numeric(as.character(clean_data_cv$Citric.acid))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_cv$mri_group <- ifelse(clean_data_cv$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_1 <- clean_data_cv%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_citric_acid = mean(Citric.acid, na.rm=TRUE), .groups = "drop")
+
+mean_data_1$group_label <- paste0("WPI: ", mean_data_1$WPI, " | ", mean_data_1$mri_group)
+
+
+ggplot(mean_data_1, aes(x = time, y = mean_citric_acid,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Citric Acid Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean Citric Acid",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
+
+# Uric Acid 
+```{r}
+clean_data_ua <- clean_data_1 %>%
+  filter(!is.na(Uric.acid), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_ua$Uric.acid <- as.numeric(as.character(clean_data_ua$Uric.acid))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_ua$mri_group <- ifelse(clean_data_ua$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_2 <- clean_data_ua%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_uric_acid = mean(Uric.acid, na.rm=TRUE), .groups = "drop")
+
+mean_data_2$group_label <- paste0("WPI: ", mean_data_2$WPI, " | ", mean_data_2$mri_group)
+
+
+ggplot(mean_data_2, aes(x = time, y = mean_uric_acid,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Uricic Acid Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean Uric Acid",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
+
+# L-Tyrosine
+```{r}
+clean_data_lty <- clean_data_1 %>%
+  filter(!is.na(L.Tyrosine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_lty$L.Tyrosine <- as.numeric(as.character(clean_data_lty$L.Tyrosine))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_lty$mri_group <- ifelse(clean_data_lty$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_3 <- clean_data_lty%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_lty = mean(L.Tyrosine, na.rm=TRUE), .groups = "drop")
+
+mean_data_3$group_label <- paste0("WPI: ", mean_data_3$WPI, " | ", mean_data_3$mri_group)
+
+
+ggplot(mean_data_3, aes(x = time, y = mean_lty,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "L-Tyrosine Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean L-Tyrosine",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
+
+# L-Threonine 
+
+```{r}
+clean_data_lth <- clean_data_1 %>%
+  filter(!is.na(L.Threonine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_lty$L.Threonine <- as.numeric(as.character(clean_data_lty$L.Threonine))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_lth$mri_group <- ifelse(clean_data_lth$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_4 <- clean_data_lth%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_lth = mean(L.Threonine, na.rm=TRUE), .groups = "drop")
+
+mean_data_4$group_label <- paste0("WPI: ", mean_data_4$WPI, " | ", mean_data_4$mri_group)
+
+
+ggplot(mean_data_4, aes(x = time, y = mean_lth,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "L-Threonine Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean L-Threonine",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
+
+# L-Cystine
+```{r}
+clean_data_lc <- clean_data_1 %>%
+  filter(!is.na(L.Cystine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_lty$L.Cystine <- as.numeric(as.character(clean_data_lty$L.Cystine))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_lc$mri_group <- ifelse(clean_data_lc$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_5 <- clean_data_lc%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_lc = mean(L.Cystine, na.rm=TRUE), .groups = "drop")
+
+mean_data_5$group_label <- paste0("WPI: ", mean_data_5$WPI, " | ", mean_data_5$mri_group)
+
+
+ggplot(mean_data_5, aes(x = time, y = mean_lc,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "L-Tyrosine Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean L-Tyrosine",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
+
+# L-Histidine
+```{r}
+clean_data_lh <- clean_data_1 %>%
+  filter(!is.na(L.Histidine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
+
+clean_data_lh$L.Histidine <- as.numeric(as.character(clean_data_lh$L.Histidine))
+
+# Calculate the median MRI_pf
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+mri_median <- median(clean_data_1$MRI_pf, na.rm = TRUE)
+
+# Create MRI group variable
+clean_data_lh$mri_group <- ifelse(clean_data_lh$MRI_pf > mri_median, "High MRI", "Low MRI")
+
+
+mean_data_6 <- clean_data_lh%>%
+  group_by(time, WPI, mri_group)%>%
+  summarise(mean_lh = mean(L.Histidine, na.rm=TRUE), .groups = "drop")
+
+mean_data_6$group_label <- paste0("WPI: ", mean_data_6$WPI, " | ", mean_data_6$mri_group)
+
+
+ggplot(mean_data_6, aes(x = time, y = mean_lh,
+                                color = group_label, group = group_label)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "L-Histidine Over Time by WPI and MRI Group",
+       x = "Time",
+       y = "Mean L-Histidine",
+       color = "WPI + MRI Group") +
+  theme_minimal()
+```
