@@ -1,0 +1,73 @@
+---
+title: "PCA of response variables"
+output: html_document
+date: "2025-06-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Start by reading in data
+```{r}
+clean_data_1 <- read_csv("clean_data_1.csv")
+```
+
+# PCA of metabolites 
+```{r}
+clean_data_1$Citric.acid <- as.numeric(as.character(clean_data_1$Citric.acid))
+clean_data_1$L.Threonine <- as.numeric(as.character(clean_data_1$L.Threonine))
+clean_data_1$L.Cystine <- as.numeric(as.character(clean_data_1$L.Cystine))
+clean_data_1$L.Tyrosine <- as.numeric(as.character(clean_data_1$L.Tyrosine))
+clean_data_1$L.Histidine <- as.numeric(as.character(clean_data_1$L.Histidine))
+clean_data_1$Uric.acid <- as.numeric(as.character(clean_data_1$Uric.acid))
+
+pca_data <- clean_data_1 %>%
+  select(L.Cystine, L.Threonine, L.Tyrosine, Uric.acid, Citric.acid, L.Histidine) %>%
+  filter(rowSums(is.na(.)) < ncol(.))  # remove rows with all NAs
+
+# Select relevant columns
+pca_data <- clean_data_1 %>%
+  select(L.Cystine, L.Threonine, L.Tyrosine, Uric.acid, Citric.acid, L.Histidine)
+
+# Replace NA with column median
+pca_data_imputed <- pca_data %>%
+  mutate(across(everything(), ~ ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+# Run PCA
+pca_result <- prcomp(pca_data_imputed, center = TRUE, scale. = TRUE)
+summary(pca_result)
+```
+# Visualization of PCA results
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+
+#Scree plot 
+# Get standard deviations of each PC
+sdev <- pca_result$sdev
+
+# Calculate proportion of variance explained
+var_explained <- sdev^2 / sum(sdev^2)
+
+# Create a data frame for plotting
+scree_data <- data.frame(
+  PC = paste0("PC", 1:length(var_explained)),
+  Variance = var_explained
+)
+
+library(ggplot2)
+
+ggplot(scree_data, aes(x = PC, y = Variance)) +
+  geom_col(fill = "steelblue") +
+  geom_line(group = 1, color = "black") +
+  geom_point(size = 2) +
+  labs(
+    title = "Scree Plot",
+    x = "Principal Component",
+    y = "Proportion of Variance Explained"
+  ) +
+  theme_minimal()
+```
+
