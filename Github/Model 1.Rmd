@@ -1,0 +1,179 @@
+---
+title: "Model 1"
+output: html_document
+date: "2025-06-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Start by loading in the data 
+```{r}
+clean_data_1 <- read.csv("clean_data_1.csv")
+
+# Install and load packages 
+install.packages("car")
+library(car)
+```
+
+# Citric Acid 
+```{r}
+#Histogram of citric acid
+hist((as.numeric(clean_data_1$Citric.acid))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting glm based on histogram 
+model_gamma <- glm(Citric.acid ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+summary(model_gamma)
+
+# Compair fit with linear model
+model_lm <- lm(Citric.acid ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+AIC(model_lm, model_gamma)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_gamma)
+
+# Variable contribution 
+Anova(model_gamma, type = 2)
+
+```
+
+# Uric Acid 
+```{r}
+#Histogram of citric acid
+hist((as.numeric(clean_data_1$Uric.acid))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting lm based on histogram 
+model_lm_ua <- lm(Uric.acid ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+model_gamma_ua <- glm(Uric.acid ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+summary(model_lm_ua)
+
+# Compair fit with glm model
+model_gamma_ua <- glm(Uric.acid ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+AIC(model_lm_ua, model_gamma_ua)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_gamma_ua)
+
+# Variable contribution 
+Anova(model_gamma_ua, type = 2)
+```
+# L-Tyrosine 
+```{r}
+#Histogram of L-Tyrosine
+hist((as.numeric(clean_data_1$L.Tyrosine))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting glm based on histogram 
+model_gamma_lty <- glm(L.Tyrosine ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+summary(model_gamma_lty)
+
+# Compair fit with linear model
+model_lm_lty <- lm(Citric.acid ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+AIC(model_lm_lty, model_gamma_lty)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_gamma_lty)
+
+# Variable contribution 
+Anova(model_gamma_lty, type = 2)
+```
+
+# L-Threonine
+```{r}
+#Histogram of citric acid
+hist((as.numeric(clean_data_1$L.Threonine))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting glm based on histogram 
+model_gamma_lth <- glm(L.Threonine ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+summary(model_gamma_lth)
+
+# Compair fit with linear model
+model_lm_lth <- lm(L.Threonine ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+AIC(model_lm_lth, model_gamma_lth)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_gamma_lth)
+
+# Variable contribution 
+Anova(model_gamma_lth, type = 2)
+```
+
+# L-Cystine 
+
+```{r}
+#Histogram of citric acid
+hist((as.numeric(clean_data_1$L.Cystine))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting lm based on histogram 
+model_lm_lc <- lm(L.Cystine ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+summary(model_lm_lc)
+
+# Compair fit with glm model
+model_gamma_lc <- glm(L.Cystine ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+
+AIC(model_lm_lc, model_gamma_lc)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_lm_lc)
+
+# Variable contribution 
+Anova(model_gamma_lc, type = 2)
+```
+
+# L-Histidine
+```{r}
+#Histogram of L-Histidine
+hist((as.numeric(clean_data_1$L.Histidine))/25000)
+
+# Converting variables 
+clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
+
+# Fitting glm based on histogram 
+model_gamma_lh <- glm(L.Histidine ~ MRI_pf + BMI + age + ethnicity,
+                   family = Gamma(link = "log"),
+                   data = clean_data_1)
+summary(model_gamma_lh)
+
+# Compair fit with linear model
+model_lm_lh <- lm(L.Histidine ~ MRI_pf + BMI + age + ethnicity, data = clean_data_1)
+AIC(model_lm_lh, model_gamma_lh)
+
+# Residual plot
+par(mfrow = c(2, 2))
+plot(model_gamma_lh)
+
+# Variable contribution 
+Anova(model_gamma_lh, type = 2)
+```
