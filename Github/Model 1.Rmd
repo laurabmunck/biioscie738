@@ -67,10 +67,10 @@ AIC(model_lm_ua, model_gamma_ua)
 
 # Residual plot
 par(mfrow = c(2, 2))
-plot(model_gamma_ua)
+plot(model_lm_ua)
 
 # Variable contribution 
-Anova(model_gamma_ua, type = 2)
+Anova(model_lm_ua, type = 2)
 ```
 # L-Tyrosine 
 ```{r}
