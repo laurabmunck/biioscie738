@@ -124,7 +124,7 @@ ggplot(mean_data_3, aes(x = time, y = mean_lty,
 clean_data_lth <- clean_data_1 %>%
   filter(!is.na(L.Threonine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
 
-clean_data_lty$L.Threonine <- as.numeric(as.character(clean_data_lty$L.Threonine))
+clean_data_lth$L.Threonine <- as.numeric(as.character(clean_data_lth$L.Threonine))
 
 # Calculate the median MRI_pf
 clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
@@ -157,7 +157,7 @@ ggplot(mean_data_4, aes(x = time, y = mean_lth,
 clean_data_lc <- clean_data_1 %>%
   filter(!is.na(L.Cystine), !is.na(MRI_pf), !is.na(WPI), !is.na(time))
 
-clean_data_lty$L.Cystine <- as.numeric(as.character(clean_data_lty$L.Cystine))
+clean_data_lc$L.Cystine <- as.numeric(as.character(clean_data_lc$L.Cystine))
 
 # Calculate the median MRI_pf
 clean_data_1$MRI_pf <- as.numeric(as.character(clean_data_1$MRI_pf))
@@ -178,9 +178,9 @@ ggplot(mean_data_5, aes(x = time, y = mean_lc,
                                 color = group_label, group = group_label)) +
   geom_point() +
   geom_line() +
-  labs(title = "L-Tyrosine Over Time by WPI and MRI Group",
+  labs(title = "L-Cystine Over Time by WPI and MRI Group",
        x = "Time",
-       y = "Mean L-Tyrosine",
+       y = "Mean L-Cystine",
        color = "WPI + MRI Group") +
   theme_minimal()
 ```
